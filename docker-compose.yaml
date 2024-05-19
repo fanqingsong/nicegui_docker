@@ -2,6 +2,19 @@
 version: '3.1'
 
 services:
+  app:
+    build: ./app
+    ports:
+      - 5050:5050
+    volumes:
+      - ./app:/code
+    command: python main.py
+    restart: always
+    depends_on:
+      - db
+      - adminer
+    networks:
+      - nicegui-docker
 
   db:
     image: postgres:16.0
@@ -13,12 +26,23 @@ services:
       PGDATA: /var/lib/postgresql/data/data/ # https://stackoverflow.com/a/63824663
     volumes:
       - poc-data:/var/lib/postgresql/data # https://stackoverflow.com/a/41650891
+    networks:
+      - nicegui-docker
 
   adminer:
     image: adminer:4.8.1
     restart: always
     ports:
       - 8080:8080
+    networks:
+      - nicegui-docker
+
 
 volumes:
   poc-data:
+
+
+networks:
+  nicegui-docker:
+    external: false
+  
